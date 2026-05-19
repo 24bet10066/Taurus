@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF8F0"/>
+      <stop offset="1" stop-color="#FCE0C2"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF7A1A"/>
+      <stop offset="1" stop-color="#DC4F00"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle tricolour stripe at the bottom -->
+  <rect x="0" y="600" width="1200" height="10" fill="#FF9933"/>
+  <rect x="0" y="610" width="1200" height="10" fill="#FFFFFF"/>
+  <rect x="0" y="620" width="1200" height="10" fill="#138808"/>
+
+  <!-- Brand mark -->
+  <g transform="translate(120 160)">
+    <rect width="160" height="160" rx="32" fill="url(#mark)"/>
+    <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="ui-sans-serif, system-ui, sans-serif" font-weight="900"
+          font-size="92" letter-spacing="-6" fill="#FFFFFF">SK</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="320" y="220" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-weight="900" font-size="78" fill="#1A1209" letter-spacing="-2">SK Electronics</text>
+  <text x="320" y="280" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-weight="700" font-size="36" fill="#DC4F00">Banda · since 2010</text>
+
+  <text x="120" y="420" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-weight="700" font-size="44" fill="#1A1209">Home appliance repair · Spare parts</text>
+  <text x="120" y="475" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-weight="500" font-size="34" fill="#5C5247">AC · Fridge · Washing machine · Geyser · TV · RO</text>
+
+  <text x="120" y="555" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-weight="700" font-size="30" fill="#047857">✓ Same-day service   ✓ No advance payment   ✓ +91 89602 45022</text>
+</svg>

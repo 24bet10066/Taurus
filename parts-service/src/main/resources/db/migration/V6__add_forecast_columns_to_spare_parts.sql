@@ -1,0 +1,3 @@
+ALTER TABLE spare_parts
+    ADD COLUMN IF NOT EXISTS weekly_forecast DECIMAL(10,2) NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS reorder_point   INT           NOT NULL DEFAULT 0;

@@ -1,0 +1,100 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  threads:
+    virtual:
+      enabled: true
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+      timeout: 3s
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
+            allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/auth/**
+
+        - id: job-service
+          uri: ${JOB_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/v1/jobs/**
+
+        - id: public-jobs
+          uri: ${JOB_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/public/**
+          filters:
+            - RewritePath=/public(?<segment>.*), /api/v1/jobs/public$\{segment}
+
+        - id: parts-service
+          uri: ${PARTS_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/v1/parts/**
+
+        - id: customer-service
+          uri: ${CUSTOMER_SERVICE_URI:http://localhost:8084}
+          predicates:
+            - Path=/api/v1/customers/**
+
+        - id: technician-service
+          uri: ${TECHNICIAN_SERVICE_URI:http://localhost:8085}
+          predicates:
+            - Path=/api/v1/technicians/**
+
+        - id: payment-service
+          uri: ${PAYMENT_SERVICE_URI:http://localhost:8087}
+          predicates:
+            - Path=/api/v1/payments/**
+
+        - id: analytics-service
+          uri: ${ANALYTICS_SERVICE_URI:http://localhost:8088}
+          predicates:
+            - Path=/api/v1/analytics/**
+
+        - id: config-service
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/config/**
+
+serviceos:
+  jwt:
+    secret: ${JWT_SECRET:change-me-please-use-a-long-random-secret-of-at-least-32-bytes-yes}
+  rate-limit:
+    default-per-minute: 100
+    public-per-minute: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: when_authorized
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    root: INFO
+    com.serviceos.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO

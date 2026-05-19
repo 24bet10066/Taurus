@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+buildCommand = "mvn clean package -pl notification-service --also-make -DskipTests"
+
+[deploy]
+startCommand = "java -jar -Dspring.profiles.active=production notification-service/target/notification-service-0.0.1-SNAPSHOT.jar"
+healthcheckPath = "/actuator/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"

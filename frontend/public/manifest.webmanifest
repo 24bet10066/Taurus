@@ -1,0 +1,40 @@
+{
+  "name": "SK Electronics — Banda",
+  "short_name": "SK Electronics",
+  "description": "Home appliance repair and spare parts in Banda, UP. Same-day service. No advance payment.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF8F0",
+  "theme_color": "#DC4F00",
+  "lang": "en-IN",
+  "categories": ["business", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-512.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New job",
+      "short_name": "New",
+      "url": "/admin?tab=pipeline&new=1"
+    },
+    {
+      "name": "Customers",
+      "short_name": "Customers",
+      "url": "/admin?tab=customers"
+    }
+  ]
+}

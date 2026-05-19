@@ -1,0 +1,93 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: detect changed modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            shared-lib:        ['shared-lib/**', 'pom.xml']
+            api-gateway:       ['api-gateway/**', 'pom.xml']
+            auth-service:      ['auth-service/**', 'pom.xml']
+            job-service:       ['job-service/**', 'pom.xml']
+            parts-service:     ['parts-service/**', 'pom.xml']
+            customer-service:  ['customer-service/**', 'pom.xml']
+            technician-service:['technician-service/**', 'pom.xml']
+            notification-service: ['notification-service/**', 'pom.xml']
+            payment-service:   ['payment-service/**', 'pom.xml']
+            analytics-service: ['analytics-service/**', 'pom.xml']
+
+  build:
+    name: build & test
+    needs: changes
+    if: ${{ needs.changes.outputs.modules != '[]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Compute -pl arg
+        id: pl
+        run: |
+          modules='${{ needs.changes.outputs.modules }}'
+          pl=$(echo "$modules" | jq -r '. | join(",")')
+          echo "value=$pl" >> "$GITHUB_OUTPUT"
+
+      - name: Maven build (changed modules + dependents)
+        run: |
+          if [ -n "${{ steps.pl.outputs.value }}" ]; then
+            mvn -B -pl "${{ steps.pl.outputs.value }}" -am --also-make-dependents \
+                clean verify
+          else
+            mvn -B clean verify
+          fi
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/target/surefire-reports/
+            **/target/failsafe-reports/
+          if-no-files-found: ignore
+
+  deploy:
+    name: deploy to Railway
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Railway
+        run: |
+          echo "Railway multi-service deployment requires manual trigger from Railway dashboard"
+          echo "Or use Railway CLI per-service after setting RAILWAY_TOKEN:"
+          echo "  railway up --service auth-service"
+          echo "  railway up --service job-service"
+          echo "  (etc for each service)"
+          echo "Auto-deploy is best configured in Railway dashboard via GitHub integration."

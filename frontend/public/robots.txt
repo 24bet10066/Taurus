@@ -1,0 +1,11 @@
+# SK Electronics — Banda
+# Allow all crawlers to index the public booking page so people searching for
+# "AC repair Banda" can find the shop.
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /tech
+Disallow: /unauthorized
+
+Sitemap: /sitemap.xml

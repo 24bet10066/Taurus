@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: ${NEON_DATABASE_URL}
+    username:
+    password:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  data:
+    redis:
+      url: ${UPSTASH_REDIS_URL}
+      timeout: 5s
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+  kafka:
+    bootstrap-servers: ${CONFLUENT_BOOTSTRAP_SERVERS}
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: "org.apache.kafka.common.security.plain.PlainLoginModule required username='${CONFLUENT_API_KEY}' password='${CONFLUENT_API_SECRET}';"
+
+# CLOUDINARY_URL env var is read directly by the Cloudinary SDK auto-configuration.
+# Set CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name in Railway dashboard.
+# The serviceos.cloudinary.* properties below are derived from it at startup.
+serviceos:
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+    api-key: ${CLOUDINARY_API_KEY:}
+    api-secret: ${CLOUDINARY_API_SECRET:}
+
+logging:
+  level:
+    root: WARN
+    com.serviceos.parts: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

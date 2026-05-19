@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+buildCommand = "mvn clean package -pl parts-service --also-make -DskipTests"
+
+[deploy]
+startCommand = "java -jar -Dspring.profiles.active=production parts-service/target/parts-service-0.0.1-SNAPSHOT.jar"
+healthcheckPath = "/actuator/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"

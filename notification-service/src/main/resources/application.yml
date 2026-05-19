@@ -1,0 +1,70 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: notification-service
+  threads:
+    virtual:
+      enabled: true
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+      timeout: 3s
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    properties:
+      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+      sasl.mechanism: ${KAFKA_SASL_MECHANISM:}
+      sasl.jaas.config: ${KAFKA_SASL_JAAS:}
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.serviceos.shared.event,com.serviceos.notification.event"
+        spring.json.type.mapping: "com.serviceos.customer.event.AmcOpportunityEvent:com.serviceos.notification.event.AmcOpportunityPayload"
+
+serviceos:
+  jwt:
+    secret: ${JWT_SECRET:change-me-please-use-a-long-random-secret-of-at-least-32-bytes}
+  notification:
+    admin-whatsapp: ${ADMIN_WHATSAPP:}
+    shop-phone: ${SHOP_PHONE:}
+    sms-cooldown-hours: 24
+    # Comma-separated list of admin phones that receive an SMS+WhatsApp on
+    # every new booking. First number = owner; rest = staff who can act if
+    # the owner is on a call. Override with env ADMIN_ALERT_PHONES in prod.
+    admin-alert-phones: ${ADMIN_ALERT_PHONES:8960245022,6306557517}
+  whatsapp:
+    base-url: https://graph.facebook.com/v21.0
+    phone-number-id: ${WA_PHONE_NUMBER_ID:}
+    access-token: ${WA_ACCESS_TOKEN:}
+  sms:
+    fast2sms:
+      base-url: https://www.fast2sms.com/dev/bulkV2
+      api-key: ${FAST2SMS_API_KEY:}
+      sender-id: ${FAST2SMS_SENDER:SVCOS}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    root: INFO
+    com.serviceos.notification: DEBUG
+    org.apache.kafka: WARN
+    org.springframework.kafka: INFO

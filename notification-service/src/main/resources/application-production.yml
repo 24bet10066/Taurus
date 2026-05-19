@@ -1,0 +1,34 @@
+spring:
+  kafka:
+    bootstrap-servers: ${CONFLUENT_BOOTSTRAP_SERVERS}
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: "org.apache.kafka.common.security.plain.PlainLoginModule required username='${CONFLUENT_API_KEY}' password='${CONFLUENT_API_SECRET}';"
+
+# Remap user-facing Railway env var names → internal config properties
+serviceos:
+  whatsapp:
+    access-token: ${WHATSAPP_TOKEN}
+    phone-number-id: ${PHONE_NUMBER_ID}
+  sms:
+    fast2sms:
+      api-key: ${FAST2SMS_KEY}
+  notification:
+    admin-whatsapp: ${ADMIN_WHATSAPP}
+    shop-phone: ${SHOP_PHONE}
+    admin-alert-phones: ${ADMIN_ALERT_PHONES:8960245022,6306557517}
+
+logging:
+  level:
+    root: WARN
+    com.serviceos.notification: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

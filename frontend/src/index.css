@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ─────────────────────────────────────────────────────────────── */
+@layer base {
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    color: #1A1209;
+    background: #FFF8F0;
+  }
+
+  body {
+    margin: 0;
+    background: #FFF8F0;
+    color: #1A1209;
+    min-height: 100dvh;
+    background-image:
+      radial-gradient(1200px 600px at 90% -10%, rgba(220,79,0,0.06), transparent 70%),
+      radial-gradient(900px 500px at -10% 110%, rgba(4,120,87,0.04), transparent 70%);
+  }
+
+  #root { min-height: 100dvh; }
+
+  /* Scrollbar — thin, warm */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(26,18,9,0.10); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(26,18,9,0.20); }
+
+  input, textarea, select, button { font-family: inherit; color: inherit; }
+
+  .num, [data-num] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+}
+
+/* ─── Components ────────────────────────────────────────────────────────── */
+@layer components {
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(26,18,9,0.05) 25%,
+      rgba(26,18,9,0.10) 50%,
+      rgba(26,18,9,0.05) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+    border-radius: 8px;
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #047857;
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+
+  .hi {
+    font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+  }
+
+  .pressable { transition: transform 120ms ease, box-shadow 120ms ease; }
+  .pressable:active { transform: scale(0.97); }
+
+  .focus-ring { outline: none; transition: box-shadow 150ms ease, border-color 150ms ease; }
+  .focus-ring:focus-visible { box-shadow: 0 0 0 4px rgba(220,79,0,0.18); }
+
+  .card-hover { transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; }
+  .card-hover:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(26,18,9,0.08), 0 1px 3px rgba(26,18,9,0.04);
+  }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-balance   { text-wrap: balance; }
+  .scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  .pt-safe   { padding-top: env(safe-area-inset-top); }
+  .pb-safe   { padding-bottom: env(safe-area-inset-bottom); }
+  .pb-safe-3 { padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem); }
+
+  .outdoor { text-shadow: 0 1px 0 rgba(255,255,255,0.5); }
+}

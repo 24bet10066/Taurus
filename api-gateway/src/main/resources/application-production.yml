@@ -1,0 +1,77 @@
+spring:
+  data:
+    redis:
+      url: ${UPSTASH_REDIS_URL}
+      timeout: 5s
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: ${FRONTEND_URL}
+            allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/auth/**
+
+        - id: job-service
+          uri: ${JOB_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/jobs/**
+
+        - id: public-jobs
+          uri: ${JOB_SERVICE_URL}
+          predicates:
+            - Path=/public/**
+          filters:
+            - RewritePath=/public(?<segment>.*), /api/v1/jobs/public$\{segment}
+
+        - id: parts-service
+          uri: ${PARTS_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/parts/**
+
+        - id: customer-service
+          uri: ${CUSTOMER_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/customers/**
+
+        - id: technician-service
+          uri: ${TECHNICIAN_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/technicians/**
+
+        - id: payment-service
+          uri: ${PAYMENT_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/payments/**
+
+        - id: analytics-service
+          uri: ${ANALYTICS_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/analytics/**
+
+        - id: config-service
+          uri: ${AUTH_SERVICE_URL}
+          predicates:
+            - Path=/api/v1/config/**
+
+logging:
+  level:
+    root: WARN
+    com.serviceos.gateway: INFO
+    org.springframework.cloud.gateway: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
