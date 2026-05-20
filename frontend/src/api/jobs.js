@@ -10,7 +10,7 @@ export const jobsApi = {
     client.get('/api/v1/jobs', { params: { customerPhone: phone, page, size } }),
 
   create: (data)      => client.post('/api/v1/jobs', data),
-  publicBook: (data)  => client.post('/api/v1/jobs/public', data),
+  publicBook: (data)  => client.post('/public', data),
 
   updateStatus: (id, status, reason) =>
     client.put(`/api/v1/jobs/${id}/status`, { status, reason }),
