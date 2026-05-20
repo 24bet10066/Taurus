@@ -24,6 +24,15 @@ client.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
+    const url = original?.url || '';
+
+    // Public endpoints must NEVER trigger the login redirect — they don't need auth.
+    const isPublic =
+      url.includes('/public') ||
+      url.includes('/auth/otp/send') ||
+      url.includes('/auth/otp/verify');
+    if (isPublic) return Promise.reject(error);
+
     if (error.response?.status !== 401 || original._retry) return Promise.reject(error);
 
     original._retry = true;
