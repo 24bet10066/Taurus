@@ -61,8 +61,10 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         String path = request.getPath().value();
 
         // Whitelisted paths — no auth
+        // Note: startsWith("/public") (no trailing slash) matches both "/public" and "/public/..."
+        // so the public booking endpoint works whether the frontend hits /public or /public/anything.
         if (WHITELISTED_PATHS.contains(path)
-                || path.startsWith("/public/")
+                || path.startsWith("/public")
                 || path.startsWith("/api/v1/payments/webhook/")) {
             return chain.filter(exchange);
         }
