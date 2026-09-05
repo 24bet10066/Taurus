@@ -105,6 +105,9 @@ public class Job {
     @Column(name = "technician_notes", columnDefinition = "TEXT")
     private String technicianNotes;
 
+    @Column(name = "completion_photo_url")
+    private String completionPhotoUrl;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

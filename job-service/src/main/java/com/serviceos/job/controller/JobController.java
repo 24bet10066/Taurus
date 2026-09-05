@@ -111,7 +111,7 @@ public class JobController {
             @PathVariable UUID id,
             @RequestBody @Valid StatusTransitionRequest req,
             @AuthenticationPrincipal AuthenticatedUser user) {
-        JobTransitionResult result = jobFSM.transition(id, req.status(), user.userId(), req.reason());
+        JobTransitionResult result = jobFSM.transition(id, req, user.userId());
         return switch (result) {
             case JobTransitionResult.Success s ->
                     ResponseEntity.ok(ApiResponse.ok(s, "Status updated to " + s.to()));

@@ -5,5 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record StatusTransitionRequest(
         @NotNull JobStatus status,
-        String reason
+        String reason,
+        java.math.BigDecimal amountCollected,
+        String completionPhotoUrl
 ) {}

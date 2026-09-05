@@ -176,7 +176,8 @@ public class JobService {
 
         // Auto-transition REQUESTED → ASSIGNED
         if (job.getStatus() == JobStatus.REQUESTED) {
-            jobFSM.transition(jobId, JobStatus.ASSIGNED, assignedBy, "Technician assigned");
+            StatusTransitionRequest transitionReq = new StatusTransitionRequest(JobStatus.ASSIGNED, "Technician assigned", null, null);
+            jobFSM.transition(jobId, transitionReq, assignedBy);
         }
 
         return toResponse(jobRepository.findById(jobId).orElseThrow());

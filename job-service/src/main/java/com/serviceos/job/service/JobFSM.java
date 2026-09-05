@@ -6,6 +6,7 @@ import com.serviceos.job.repository.JobPartUsedRepository;
 import com.serviceos.job.repository.JobRepository;
 import com.serviceos.job.repository.JobStatusHistoryRepository;
 import com.serviceos.job.repository.JobTechnicianRepository;
+import com.serviceos.job.dto.request.StatusTransitionRequest;
 import com.serviceos.shared.enums.JobStatus;
 import com.serviceos.shared.result.JobTransitionResult;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,10 @@ public class JobFSM {
     }
 
     @Transactional
-    public JobTransitionResult transition(UUID jobId, JobStatus targetStatus, UUID changedBy, String reason) {
+    public JobTransitionResult transition(UUID jobId, StatusTransitionRequest req, UUID changedBy) {
+        JobStatus targetStatus = req.status();
+        String reason = req.reason();
+        
         Job job = jobRepository.findById(jobId).orElse(null);
         if (job == null) return new JobTransitionResult.JobNotFound(jobId);
 
@@ -53,6 +57,16 @@ public class JobFSM {
                     current, targetStatus,
                     "Transition " + current + " → " + targetStatus + " is not allowed"
             );
+        }
+
+        if (targetStatus == JobStatus.COMPLETED) {
+            if (req.amountCollected() == null || req.completionPhotoUrl() == null || req.completionPhotoUrl().isBlank()) {
+                return new JobTransitionResult.InvalidTransition(
+                        current, targetStatus,
+                        "Transition to COMPLETED requires amountCollected and completionPhotoUrl"
+                );
+            }
+            job.setCompletionPhotoUrl(req.completionPhotoUrl());
         }
 
         applyTransitionSideEffects(job, current, targetStatus);

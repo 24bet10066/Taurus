@@ -34,3 +34,6 @@ logs/
 ../BEST-IDEA/
 ../BUSINESS-VALIDATION.md
 ../GitHub/
+resume*
+*.tmp
+.~lock.*#

@@ -61,7 +61,7 @@ class JobFSMTest {
     @Test
     @DisplayName("Valid transition REQUESTED → ASSIGNED returns Success")
     void validTransition_returnsSuccess() {
-        JobTransitionResult result = fsm.transition(jobId, JobStatus.ASSIGNED, changedBy, "assigned");
+        JobTransitionResult result = fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.ASSIGNED, "assigned", null, null), changedBy);
 
         assertThat(result).isInstanceOf(JobTransitionResult.Success.class);
         JobTransitionResult.Success success = (JobTransitionResult.Success) result;
@@ -72,7 +72,7 @@ class JobFSMTest {
     @Test
     @DisplayName("Valid transition updates job status in DB")
     void validTransition_savesUpdatedJob() {
-        fsm.transition(jobId, JobStatus.ASSIGNED, changedBy, null);
+        fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.ASSIGNED, null, null, null), changedBy);
 
         ArgumentCaptor<Job> captor = ArgumentCaptor.forClass(Job.class);
         verify(jobRepository).save(captor.capture());
@@ -82,7 +82,7 @@ class JobFSMTest {
     @Test
     @DisplayName("Valid transition saves status history record")
     void validTransition_savesHistory() {
-        fsm.transition(jobId, JobStatus.ASSIGNED, changedBy, "test reason");
+        fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.ASSIGNED, "test reason", null, null), changedBy);
 
         ArgumentCaptor<JobStatusHistory> captor = ArgumentCaptor.forClass(JobStatusHistory.class);
         verify(historyRepository).save(captor.capture());
@@ -94,7 +94,7 @@ class JobFSMTest {
     @Test
     @DisplayName("Valid transition publishes status-changed event")
     void validTransition_publishesEvent() {
-        fsm.transition(jobId, JobStatus.ASSIGNED, changedBy, null);
+        fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.ASSIGNED, null, null, null), changedBy);
         verify(eventPublisher).publishStatusChanged(any(), eq(JobStatus.REQUESTED), eq(JobStatus.ASSIGNED));
     }
 
@@ -102,7 +102,7 @@ class JobFSMTest {
     @DisplayName("Invalid transition returns InvalidTransition, no DB writes")
     void invalidTransition_returnsInvalidTransition() {
         // REQUESTED cannot jump directly to COMPLETED
-        JobTransitionResult result = fsm.transition(jobId, JobStatus.COMPLETED, changedBy, null);
+        JobTransitionResult result = fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.COMPLETED, null, null, null), changedBy);
 
         assertThat(result).isInstanceOf(JobTransitionResult.InvalidTransition.class);
         verify(jobRepository, never()).save(any());
@@ -115,7 +115,7 @@ class JobFSMTest {
         UUID missing = UUID.randomUUID();
         given(jobRepository.findById(missing)).willReturn(Optional.empty());
 
-        JobTransitionResult result = fsm.transition(missing, JobStatus.ASSIGNED, changedBy, null);
+        JobTransitionResult result = fsm.transition(missing, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.ASSIGNED, null, null, null), changedBy);
 
         assertThat(result).isInstanceOf(JobTransitionResult.JobNotFound.class);
     }
@@ -125,7 +125,7 @@ class JobFSMTest {
     void terminalState_returnsTerminalState() {
         job.setStatus(JobStatus.CANCELLED);
 
-        JobTransitionResult result = fsm.transition(jobId, JobStatus.ASSIGNED, changedBy, null);
+        JobTransitionResult result = fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.ASSIGNED, null, null, null), changedBy);
 
         assertThat(result).isInstanceOf(JobTransitionResult.TerminalState.class);
         verify(jobRepository, never()).save(any());
@@ -138,7 +138,7 @@ class JobFSMTest {
         job.setLaborCharge(BigDecimal.valueOf(500));
         given(partsRepository.sumPartsChargeByJobId(jobId)).willReturn(BigDecimal.valueOf(250));
 
-        fsm.transition(jobId, JobStatus.COMPLETED, changedBy, null);
+        fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.COMPLETED, null, BigDecimal.TEN, "photo.jpg"), changedBy);
 
         ArgumentCaptor<Job> captor = ArgumentCaptor.forClass(Job.class);
         verify(jobRepository).save(captor.capture());
@@ -153,7 +153,7 @@ class JobFSMTest {
     void completedTransition_publishesCompletedEvent() {
         job.setStatus(JobStatus.IN_PROGRESS);
 
-        fsm.transition(jobId, JobStatus.COMPLETED, changedBy, null);
+        fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.COMPLETED, null, BigDecimal.TEN, "photo.jpg"), changedBy);
 
         verify(eventPublisher).publishJobCompleted(any());
     }
@@ -161,7 +161,7 @@ class JobFSMTest {
     @Test
     @DisplayName("CANCELLED transition sets cancelledAt")
     void cancelledTransition_setsCancelledAt() {
-        fsm.transition(jobId, JobStatus.CANCELLED, changedBy, "customer cancelled");
+        fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(JobStatus.CANCELLED, "customer cancelled", null, null), changedBy);
 
         ArgumentCaptor<Job> captor = ArgumentCaptor.forClass(Job.class);
         verify(jobRepository).save(captor.capture());
@@ -176,7 +176,7 @@ class JobFSMTest {
                 JobStatus.DIAGNOSING, JobStatus.IN_PROGRESS, JobStatus.COMPLETED
         };
         for (JobStatus next : path) {
-            JobTransitionResult result = fsm.transition(jobId, next, changedBy, null);
+            JobTransitionResult result = fsm.transition(jobId, new com.serviceos.job.dto.request.StatusTransitionRequest(next, null, next == JobStatus.COMPLETED ? BigDecimal.TEN : null, next == JobStatus.COMPLETED ? "photo.jpg" : null), changedBy);
             assertThat(result)
                     .as("Expected Success for transition to %s", next)
                     .isInstanceOf(JobTransitionResult.Success.class);
