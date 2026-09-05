@@ -1,0 +1,13 @@
+{
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_CURL54321",
+        "order_id": "order_CURL12345",
+        "amount": 15000,
+        "status": "captured"
+      }
+    }
+  }
+}
