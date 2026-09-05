@@ -37,3 +37,6 @@ logs/
 resume*
 *.tmp
 .~lock.*#
+mlops-forecasting/venv/
+mlops-forecasting/train_output.txt
+.DS_Store
