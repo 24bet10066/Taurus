@@ -81,4 +81,19 @@ public class PaymentController {
         LocalDate target = date != null ? date : LocalDate.now();
         return ResponseEntity.ok(ApiResponse.ok(summaryService.getSummary(target)));
     }
+
+    @GetMapping("/reconciliation/technician/{technicianId}")
+    @Operation(summary = "Get daily cash float reconciliation for a technician")
+    @PreAuthorize("hasAnyRole('ADMIN','TECHNICIAN_HIRED')")
+    public ResponseEntity<ApiResponse<com.serviceos.payment.dto.response.CashReconciliationResponse>> getCashReconciliation(
+            @PathVariable UUID technicianId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @AuthenticationPrincipal AuthenticatedUser user) {
+        // A technician can only view their own reconciliation; Admin can view anyone's
+        if (user != null && "TECHNICIAN_HIRED".equals(user.role().name()) && !user.userId().equals(technicianId)) {
+            return ResponseEntity.status(403).build();
+        }
+        LocalDate targetDate = date != null ? date : LocalDate.now();
+        return ResponseEntity.ok(ApiResponse.ok(paymentService.getCashReconciliation(technicianId, targetDate)));
+    }
 }

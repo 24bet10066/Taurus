@@ -76,7 +76,6 @@ public class PaymentService {
         record.setCompletedAt(Instant.now());
         record = paymentRepository.save(record);
 
-        notifyJobService(req.jobId(), "COLLECTED", "CASH");
         eventPublisher.publishPaymentReceived(record);
 
         log.info("Cash payment collected: paymentId={} jobId={} amount={}",
@@ -144,7 +143,6 @@ public class PaymentService {
 
         record = paymentRepository.save(record);
 
-        notifyJobService(req.jobId(), "COLLECTED", "RAZORPAY");
         eventPublisher.publishPaymentReceived(record);
 
         log.info("Razorpay payment verified: paymentId={} jobId={} rzpPaymentId={}",
@@ -160,6 +158,24 @@ public class PaymentService {
     public List<PaymentStatusResponse> getByJobId(UUID jobId) {
         return paymentRepository.findByJobIdOrderByCreatedAtDesc(jobId)
                 .stream().map(this::toResponse).toList();
+    }
+
+    // -------------------------------------------------------------------------
+    // Cash Reconciliation
+    // -------------------------------------------------------------------------
+
+    @Transactional(readOnly = true)
+    public com.serviceos.payment.dto.response.CashReconciliationResponse getCashReconciliation(UUID technicianId, java.time.LocalDate date) {
+        java.time.ZoneId tz = java.time.ZoneId.of("Asia/Kolkata");
+        Instant from = date.atStartOfDay(tz).toInstant();
+        Instant to = date.plusDays(1).atStartOfDay(tz).toInstant();
+
+        java.math.BigDecimal totalCash = paymentRepository.sumCashByTechnicianAndRange(technicianId, from, to);
+        List<PaymentRecord> records = paymentRepository.findCashByTechnicianAndRange(technicianId, from, to);
+
+        return new com.serviceos.payment.dto.response.CashReconciliationResponse(
+                technicianId, date, totalCash, records
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -202,7 +218,6 @@ public class PaymentService {
                         record.setRazorpayPaymentId(paymentId);
                         record.setCompletedAt(Instant.now());
                         paymentRepository.save(record);
-                        notifyJobService(record.getJobId(), "COLLECTED", "RAZORPAY");
                         eventPublisher.publishPaymentReceived(record);
                         log.info("Webhook: payment captured orderId={} paymentId={}", orderId, paymentId);
                     });
@@ -239,14 +254,6 @@ public class PaymentService {
             log.warn("Job status lookup failed for jobId={}: {}", jobId, ex.getMessage());
             throw new BusinessRuleViolationException("JOB_LOOKUP_FAILED",
                     "Could not verify job status: " + ex.getMessage());
-        }
-    }
-
-    private void notifyJobService(UUID jobId, String status, String method) {
-        try {
-            jobServiceClient.markPaymentCollected(jobId, status, method);
-        } catch (Exception ex) {
-            log.warn("Failed to update job payment status for jobId={}: {}", jobId, ex.getMessage());
         }
     }
 

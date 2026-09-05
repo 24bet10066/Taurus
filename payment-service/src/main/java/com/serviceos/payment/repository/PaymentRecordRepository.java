@@ -40,4 +40,31 @@ public interface PaymentRecordRepository extends JpaRepository<PaymentRecord, UU
     BigDecimal sumByMethodAndRange(@Param("method") String method,
                                    @Param("from") Instant from,
                                    @Param("to") Instant to);
+
+    @Query("""
+            SELECT COALESCE(SUM(p.amount), 0)
+            FROM PaymentRecord p
+            WHERE p.status = 'COMPLETED'
+              AND p.paymentMethod = 'CASH'
+              AND p.collectedBy = :technicianId
+              AND p.createdAt >= :from
+              AND p.createdAt < :to
+            """)
+    BigDecimal sumCashByTechnicianAndRange(@Param("technicianId") UUID technicianId,
+                                           @Param("from") Instant from,
+                                           @Param("to") Instant to);
+
+    @Query("""
+            SELECT p
+            FROM PaymentRecord p
+            WHERE p.status = 'COMPLETED'
+              AND p.paymentMethod = 'CASH'
+              AND p.collectedBy = :technicianId
+              AND p.createdAt >= :from
+              AND p.createdAt < :to
+            ORDER BY p.createdAt DESC
+            """)
+    List<PaymentRecord> findCashByTechnicianAndRange(@Param("technicianId") UUID technicianId,
+                                                     @Param("from") Instant from,
+                                                     @Param("to") Instant to);
 }
