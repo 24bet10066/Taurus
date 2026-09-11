@@ -8,11 +8,12 @@ spring:
     virtual:
       enabled: true
   datasource:
-    url: ${TECHNICIAN_DB_URL:jdbc:postgresql://localhost:5432/serviceos_technicians?sslmode=require}
-    username: ${TECHNICIAN_DB_USER:postgres}
-    password: ${TECHNICIAN_DB_PASSWORD:postgres}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/serviceos}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
     hikari:
+      schema: technicians
       maximum-pool-size: 10
       minimum-idle: 2
   jpa:
@@ -20,6 +21,7 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
+        default_schema: technicians
         jdbc:
           time_zone: Asia/Kolkata
         format_sql: false
@@ -27,6 +29,9 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    schemas: technicians
+    default-schema: technicians
+    create-schemas: true
     locations: classpath:db/migration
   data:
     redis:

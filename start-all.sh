@@ -18,7 +18,7 @@ start_service() {
   echo -n "Starting $name on port $port... "
 
   eval "export JWT_SECRET=$JWT \
-    SPRING_DATASOURCE_URL=jdbc:postgresql://$HOST/$db?sslmode=disable \
+    SPRING_DATASOURCE_URL=jdbc:postgresql://$HOST/serviceos?sslmode=disable \
     SPRING_DATASOURCE_USERNAME=$PG \
     SPRING_DATASOURCE_PASSWORD=$PG \
     $extra"
