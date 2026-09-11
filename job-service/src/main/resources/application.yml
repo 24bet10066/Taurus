@@ -8,12 +8,11 @@ spring:
     virtual:
       enabled: true
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/serviceos}
-    username: ${DATABASE_USER:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    url: ${JOB_DB_URL:jdbc:postgresql://localhost:5432/serviceos_jobs?sslmode=require}
+    username: ${JOB_DB_USER:postgres}
+    password: ${JOB_DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
     hikari:
-      schema: jobs
       maximum-pool-size: 10
       minimum-idle: 2
   jpa:
@@ -21,7 +20,6 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        default_schema: jobs
         jdbc:
           time_zone: Asia/Kolkata
         format_sql: false
@@ -29,9 +27,6 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    schemas: jobs
-    default-schema: jobs
-    create-schemas: true
     locations: classpath:db/migration
   data:
     redis:
