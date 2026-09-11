@@ -57,10 +57,12 @@ public class NotificationDispatcher {
      */
     public void dispatchBoth(String phone, String message, String messageType, boolean emergency) {
         boolean waSent = whatsApp.send(phone, message);
-        if (!waSent && cooldown.shouldSend(phone, messageType, emergency)) {
+        if (cooldown.shouldSend(phone, messageType, emergency)) {
             boolean smsSent = sms.send(phone, message);
             if (smsSent) cooldown.recordSent(phone, messageType);
-            if (!smsSent) log.warn("Both channels failed for phone={}", phone);
+            if (!smsSent && !waSent) log.warn("Both channels failed for phone={}", phone);
+        } else if (!waSent) {
+            log.warn("Both channels failed for phone={}", phone);
         }
     }
 

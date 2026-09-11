@@ -14,19 +14,20 @@ class NotificationDispatcherTest {
 
     @Mock WhatsAppChannel whatsApp;
     @Mock SmsChannel sms;
+    @Mock com.serviceos.notification.service.SmsCooldownService cooldown;
 
     NotificationDispatcher dispatcher;
 
     @BeforeEach
     void setUp() {
-        dispatcher = new NotificationDispatcher(whatsApp, sms);
+        dispatcher = new NotificationDispatcher(whatsApp, sms, cooldown);
     }
 
     @Test
     void dispatch_whatsappSucceeds_returnWhatsappResult() {
         when(whatsApp.send("9876543210", "Hello")).thenReturn(true);
 
-        SendResult result = dispatcher.dispatch("9876543210", "Hello");
+        SendResult result = dispatcher.dispatch("9876543210", "Hello", "TEST", false);
 
         assertThat(result.success()).isTrue();
         assertThat(result.channel()).isEqualTo("whatsapp");
@@ -36,9 +37,10 @@ class NotificationDispatcherTest {
     @Test
     void dispatch_whatsappFails_fallsBackToSms() {
         when(whatsApp.send("9876543210", "Hello")).thenReturn(false);
+        when(cooldown.shouldSend(any(), any(), anyBoolean())).thenReturn(true);
         when(sms.send("9876543210", "Hello")).thenReturn(true);
 
-        SendResult result = dispatcher.dispatch("9876543210", "Hello");
+        SendResult result = dispatcher.dispatch("9876543210", "Hello", "TEST", false);
 
         assertThat(result.success()).isTrue();
         assertThat(result.channel()).isEqualTo("sms");
@@ -47,9 +49,10 @@ class NotificationDispatcherTest {
     @Test
     void dispatch_bothFail_returnFailure() {
         when(whatsApp.send(any(), any())).thenReturn(false);
+        when(cooldown.shouldSend(any(), any(), anyBoolean())).thenReturn(true);
         when(sms.send(any(), any())).thenReturn(false);
 
-        SendResult result = dispatcher.dispatch("9876543210", "Hello");
+        SendResult result = dispatcher.dispatch("9876543210", "Hello", "TEST", false);
 
         assertThat(result.success()).isFalse();
         assertThat(result.error()).isEqualTo("all channels failed");
@@ -58,9 +61,10 @@ class NotificationDispatcherTest {
     @Test
     void dispatchBoth_sendsOnBothChannels() {
         when(whatsApp.send(any(), any())).thenReturn(true);
+        when(cooldown.shouldSend(any(), any(), anyBoolean())).thenReturn(true);
         when(sms.send(any(), any())).thenReturn(true);
 
-        dispatcher.dispatchBoth("9876543210", "Cancelled");
+        dispatcher.dispatchBoth("9876543210", "Cancelled", "TEST", false);
 
         verify(whatsApp).send("9876543210", "Cancelled");
         verify(sms).send("9876543210", "Cancelled");
@@ -69,9 +73,10 @@ class NotificationDispatcherTest {
     @Test
     void dispatchBoth_whatsappFails_stillSendsSms() {
         when(whatsApp.send(any(), any())).thenReturn(false);
+        when(cooldown.shouldSend(any(), any(), anyBoolean())).thenReturn(true);
         when(sms.send(any(), any())).thenReturn(true);
 
-        dispatcher.dispatchBoth("9876543210", "Cancelled");
+        dispatcher.dispatchBoth("9876543210", "Cancelled", "TEST", false);
 
         verify(sms).send("9876543210", "Cancelled");
     }
