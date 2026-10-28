@@ -76,31 +76,11 @@ Both flows feed shared inventory and reports, but repair income, parts-sale marg
 
 ### P0.5 — Job status history and exception handling
 
-### Frontend
-1. `cd frontend`
-2. Update `.env.production` → `VITE_API_BASE_URL=https://<your-api-gateway-domain>`
-3. `npm run build` → produces `dist/`
-4. Deploy `dist/` to **Cloudflare Pages** or any static host.
-5. Open `https://<your-frontend-domain>/?phone=9876543210&appliance=AC` to test deeplink prefill.
-
-### Backend deploy options (in order of cost/complexity)
-| Option | Cost/mo | Setup time | When to pick |
-|---|---|---|---|
-| Render (Web Services) | Scalable | 1 hour | **Start here.** Fully managed, zero ops. |
-| Single Hetzner CX22 VPS, docker-compose | ~₹400 | 2 hours | If Render gets too expensive at scale. |
-| AWS ECS Fargate | ~₹4000 | 1 day | When you have ≥ 2 paying staff users and need VPC peering. |
-
-<!-- GitHub alternative section retained for later consolidation -->
-
----
-
 - [ ] Record each status transition, actor, timestamp, previous and new state, and reason where necessary.
 - [ ] Prevent invalid transitions and handle simultaneous admin/technician updates.
 - [ ] Make unassigned, stalled, cancellation, parts-needed, revisit, and failed-notification work visible in the admin view.
 
 **Acceptance criteria:** the timeline explains what happened without relying on WhatsApp history or memory.
-
-<!-- End of retained GitHub alternative section -->
 
 ## Phase 2 — Improve service quality and repeat business
 
@@ -127,12 +107,6 @@ Both flows feed shared inventory and reports, but repair income, parts-sale marg
 
 ### P1.4 — Supplier replenishment workflow
 
-## 7 · Honest closing — what to do this week
-
-<!-- GitHub alternative section retained for later consolidation -->
-
----
-
 - [ ] Maintain supplier contacts and purchase history.
 - [ ] Let the system draft suggested quantities based on low stock and consumption history.
 - [ ] Require owner review/approval before sending an order or committing business money.
@@ -157,8 +131,6 @@ Do not forecast recurring revenue until pricing, margin, conversion, capacity, a
 ### P2.1 — Telephony integration
 
 Defer until the manual Log call flow has been measured and the benefit of call-triggered automation is clear. Before buying a phone integration, measure call volume, missed calls, booking conversion, monthly cost, and reliability requirements.
-
-<!-- End of retained GitHub alternative section -->
 
 ### P2.2 — Forecast quality before ML expansion
 
