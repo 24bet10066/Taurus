@@ -1,40 +1,8 @@
-# ServiceOS / Taurus (wrenchy.in)
-
-<!-- GitHub alternative section retained for later consolidation -->
-
----
-
 <div align="center">
-
-<!-- End of retained GitHub alternative section -->
 
 # Wrenchy — Service & Spare-Parts Operations Platform
 
 ### ServiceOS backend · Java · Spring Boot · Event-driven systems · Data-driven inventory forecasting
-
-1. **B2C repair service** — 4 hired technicians managed by admin (shop earns labor + parts margin).
-2. **B2B parts shop** — sells parts to ~200 freelance technicians (shop earns parts margin only).
-
-## Tech Stack (Current State)
-
-| Layer | Choice |
-|---|---|
-| Language | Java 21 (Virtual Threads, Records, Sealed Interfaces) |
-| Framework | Spring Boot 3.3.5 + Spring Cloud 2023.0.3 |
-| Database | PostgreSQL 16 (database-per-service: 7 databases on one server instance, each in its `public` schema) |
-| Cache | Redis 7 |
-| Messaging | Kafka 3.7 |
-| Frontend | React 19 + Tailwind CSS |
-| Payments | Razorpay |
-| WhatsApp | Notification-service channel (mechanism unverified — see PROJECT_CONTEXT.md §10) |
-| SMS | Notification-service channel (provider unverified — see PROJECT_CONTEXT.md §10) |
-| Storage | Cloudinary |
-| Hosting | Not currently decided — Postgres/Redis/Kafka run self-hosted via Docker Compose in local/dev |
-| CI/CD | GitHub Actions (path-filtered per-service builds) |
-
-<!-- GitHub alternative section retained for later consolidation -->
-
----
 
 Wrenchy is being built around the real operating needs of a home-appliance repair and spare-parts business: coordinating service jobs, technicians, parts, collections, and follow-up without relying on disconnected paper records.
 
@@ -44,8 +12,6 @@ Wrenchy is being built around the real operating needs of a home-appliance repai
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 
 </div>
-
-<!-- End of retained GitHub alternative section -->
 
 ---
 
@@ -68,18 +34,10 @@ Wrenchy is being built around the real operating needs of a home-appliance repai
 
 The first intended operating environment is SK Electronics, a home-appliance repair and spare-parts business in Banda, Uttar Pradesh. The shop has two connected sources of work and revenue:
 
-## Job State Machine
-
-<!-- GitHub alternative section retained for later consolidation -->
-
----
-
 | Business line | Who it serves | How the work and money flow |
 |---|---|---|
 | **B2C repair service** | Households needing an appliance repaired | A customer requests a repair; the shop coordinates a hired technician; the job, parts used, collection, and follow-up are recorded. The business earns service/labour income and the applicable parts margin. |
 | **B2B spare-parts shop** | Independent/freelance technicians buying parts | A technician buys parts at the counter; the sale reduces stock and creates a cash receipt or an approved credit balance. The shop earns the parts margin. |
-
-<!-- End of retained GitHub alternative section -->
 
 The product's purpose is operational control, not technology for its own sake. A useful system should answer practical questions reliably:
 
@@ -145,20 +103,6 @@ REQUESTED → ASSIGNED → IN_TRANSIT → AT_CUSTOMER → DIAGNOSING
 CANCELLED may be reached from the applicable states, subject to the implemented transition rules.
 ```
 
-## Key DSA Decisions
-
-- **Job assignment**: Priority queue, score = skill 50% + workload 30% + trust 20%.
-- **Parts search**: In-memory Trie (O(k) prefix) + PostgreSQL full-text fallback.
-- **Inventory forecast**: Exponential Weighted Moving Average, α = 0.30.
-- **Freelancer trust**: Composite (payment 40% + frequency 30% + tenure 20% + volume 10%) → credit limit.
-- **Batch traceability**: SHA-256 hash chain.
-
-## Build & Local Development
-
-<!-- GitHub alternative section retained for later consolidation -->
-
----
-
 The job history should capture who made each change, when it happened, and the reason for cancellations, reassignment, parts requests, or revisits. A status field alone is not a sufficient audit trail.
 
 ### 3.4 Diagnosis and parts usage
@@ -172,33 +116,7 @@ The technician records the diagnosis and identifies any required part. The workf
 
 A part used on a repair must be linked to the job and recorded once in the inventory ledger. The stock deduction must be transaction-safe so that simultaneous sales or job updates cannot silently oversell the same units. A shortage should create a visible exception for the admin rather than letting the job disappear into a chat.
 
-<!-- End of retained GitHub alternative section -->
-
 ### 3.5 Completion evidence and payment
-
-# Spin up local Postgres, Redis, Kafka
-docker compose up -d
-
-# Run a service
-./mvnw -pl auth-service spring-boot:run
-```
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in:
-
-- `JWT_SECRET` — 32+ random bytes
-- `DATABASE_URL` — PostgreSQL connection string
-- `REDIS_URL` — Redis connection string
-- `KAFKA_BOOTSTRAP` — Kafka bootstrap server (self-hosted; `localhost:9092` in local dev)
-- `RAZORPAY_*` — Razorpay credentials
-- `WA_PHONE_NUMBER_ID`, `WA_ACCESS_TOKEN` — Meta WhatsApp Cloud API
-- `FAST2SMS_API_KEY`, `FAST2SMS_SENDER` — Fast2SMS
-- `CLOUDINARY_*` — Cloudinary credentials
-
-<!-- GitHub alternative section retained for later consolidation -->
-
----
 
 **Target control:** a technician should not be able to close a job merely by tapping “Completed.” The completion flow should capture the repair result, required evidence (such as an appliance/repair photo where appropriate), parts used, final charge, amount collected, payment method, and any balance still due. The job should close only after the required data is saved successfully.
 
@@ -380,8 +298,6 @@ To build the auth service and its module dependencies:
 ```
 
 To run one Spring Boot module during development:
-
-<!-- End of retained GitHub alternative section -->
 
 ```bash
 ./mvnw -pl auth-service spring-boot:run
