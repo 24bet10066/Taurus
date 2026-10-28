@@ -167,3 +167,27 @@ Before inviting real customers to rely on the system, verify:
 ## How to use this roadmap
 
 Treat priorities as order of attention, not promises about calendar dates. Update status only when acceptance criteria pass in the current code and deployed environment. Record the test and any unresolved limitation. The goal is to make the physical business more dependable, not to maximize the number of features in a GitHub repository.
+
+---
+
+## Historical implementation snapshot (reported 17 May 2026)
+
+The older local roadmap reported the following changes as completed at that time.
+This is a historical record, not confirmation of current production status.
+Re-test the current code and deployed application before marking these items verified.
+
+- **Booking payload alignment:** mapped frontend `description` and `address`
+  to backend `issueDescription` and `area`; deduplicated booking toasts.
+- **Past-date validation:** added date checks at input and submission time.
+- **Log Call workflow:** recorded customer details and opened WhatsApp with a
+  prefilled introduction and booking link.
+- **Customer lookup:** reported phone-based search for past repairs, appliances,
+  outstanding balances, and contact actions.
+- **Day-end money summary:** reported cash and online totals with a pending-collection alert.
+- **Payment collection:** reported a job-sheet modal for recording cash or online
+  payments and triggering a WhatsApp receipt.
+- **Frontend hardening:** reported a PWA manifest, link-preview metadata,
+  robots.txt, sitemap, ErrorBoundary fallback, favicon/icons, and LocalBusiness metadata.
+- **Technician gateway routing:** reported a fix for technician API routing.
+- **Payment notifications:** reported that the payment-received Kafka consumer
+  was updated to send WhatsApp notifications instead of only logging events.

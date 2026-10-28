@@ -39,6 +39,11 @@ The first intended operating environment is SK Electronics, a home-appliance rep
 | **B2C repair service** | Households needing an appliance repaired | A customer requests a repair; the shop coordinates a hired technician; the job, parts used, collection, and follow-up are recorded. The business earns service/labour income and the applicable parts margin. |
 | **B2B spare-parts shop** | Independent/freelance technicians buying parts | A technician buys parts at the counter; the sale reduces stock and creates a cash receipt or an approved credit balance. The shop earns the parts margin. |
 
+**Operating scale snapshot from older local notes (May 2026):** The notes described
+4 hired technicians supporting B2C repairs and approximately 200 freelance technicians
+served by the B2B parts shop. These are historical estimates, not verified live counts.
+
+
 The product's purpose is operational control, not technology for its own sake. A useful system should answer practical questions reliably:
 
 - Which jobs are new, assigned, in progress, completed, awaiting parts, or due for a revisit?
