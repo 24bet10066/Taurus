@@ -1,8 +1,7 @@
 # Build output
 target/
 dist/
-dist-final*/
-dist-launch/
+dist-*/
 node_modules/
 *.jar
 *.class

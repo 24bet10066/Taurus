@@ -74,22 +74,13 @@ mvn clean install -q
 
 ### Step 2 — Backend deploy (15 min)
 
-**Easiest** — single Hetzner CX22 (€4.50 / ~₹400 per month):
-```bash
-# On the server, after SSH + Docker installed
-git clone <your-git-url> taurus
-cd taurus
-docker compose up -d           # postgres + redis + kafka
-mvn install -pl shared-lib -q
-./start-serviceos.sh            # all 7 spring boot services
-./health-check.sh               # all should show UP
-```
-
-Point a subdomain (`api.wrenchy.in`) to the server, configure NGINX or Caddy with TLS:
-```
-# Caddy is one-command auto-TLS
-caddy reverse-proxy --from api.wrenchy.in --to localhost:8080
-```
+**No hosting platform is currently decided.** Each service is a standard
+Spring Boot app that reads its Postgres, Redis, and Kafka endpoints from
+environment variables (`DATABASE_URL`, `REDIS_URL`, `KAFKA_BOOTSTRAP`,
+plus the `RAZORPAY_*` and channel credentials). It can run anywhere those
+dependencies are reachable — the same `docker compose` stack used for
+local dev, a single VM, or a managed platform. Pick a target when the
+deployment decision is actually made; nothing in the code assumes one.
 
 ### Step 3 — Frontend deploy (10 min)
 
@@ -106,12 +97,7 @@ npm install
 npm run build       # produces dist/
 ```
 
-Deploy `dist/` to **Vercel** (`vercel.json` already configured):
-```bash
-npx vercel --prod
-```
-
-Or any static host (Netlify, Cloudflare Pages, S3+CloudFront — all work the same way).
+Deploy `dist/` to **Cloudflare Pages** or any static host.
 
 ### Step 4 — Smoke test (15 min)
 
@@ -185,7 +171,7 @@ From `ROADMAP.md` section 1 — the gaps that hurt money daily:
 - `public/icon-512.svg` — full app icon, used by PWA install + iOS home screen.
 - `public/og-card.svg` — 1200×630 share card with tricolour stripe, used by every WhatsApp/Instagram/FB link preview.
 
-If you want to replace these with AI-generated images, use the prompts in `ROADMAP.md` section 6. The SVGs are zero-byte placeholders that look more professional than the Vite default.
+The SVGs are zero-byte placeholders that look more professional than the Vite default.
 
 ---
 

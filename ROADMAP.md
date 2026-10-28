@@ -108,16 +108,15 @@ These look productive but cost you time:
 1. `cd frontend`
 2. Update `.env.production` → `VITE_API_BASE_URL=https://<your-api-gateway-domain>`
 3. `npm run build` → produces `dist/`
-4. Deploy `dist/` to **Vercel** (already configured via `vercel.json`) or any static host.
+4. Deploy `dist/` to **Cloudflare Pages** or any static host.
 5. Open `https://<your-frontend-domain>/?phone=9876543210&appliance=AC` to test deeplink prefill.
 
 ### Backend deploy options (in order of cost/complexity)
 | Option | Cost/mo | Setup time | When to pick |
 |---|---|---|---|
-| Single Hetzner CX22 VPS, docker-compose | ~₹400 | 2 hours | **Start here.** Sufficient up to 500 jobs/day. |
-| Railway, all services | ~₹1500 | 1 hour | If you don't want to SSH. |
-| Render free tier | ₹0 | 1 hour | Demo only; cold-start latency hurts UX. |
-| AWS ECS Fargate | ~₹4000 | 1 day | When you have ≥ 2 paying staff users. |
+| Render (Web Services) | Scalable | 1 hour | **Start here.** Fully managed, zero ops. |
+| Single Hetzner CX22 VPS, docker-compose | ~₹400 | 2 hours | If Render gets too expensive at scale. |
+| AWS ECS Fargate | ~₹4000 | 1 day | When you have ≥ 2 paying staff users and need VPC peering. |
 
 ### Pre-launch smoke tests (do all 7 in order)
 1. Open landing page on phone → trust strip renders, "Book Service" works → fill 3 steps → confirms.
@@ -170,62 +169,6 @@ Koi bhi sawaal ho to sidha call/WhatsApp karein.
 
 ### First 50 customers
 Hand-pick from existing customer phone numbers. WhatsApp them one-by-one (no spam blast — Meta will flag the number). The Log Call modal does this for you, one customer at a time, naturally.
-
----
-
-## 6 · Logo & app-icon prompts (Indian tricolour + psychology)
-
-You asked for prompts. Drop these into any AI image tool (Midjourney, DALL-E, Ideogram, Adobe Firefly). I've encoded the psychology in the prompt itself.
-
-### Logo prompt — flat, professional, scalable
-```
-Minimalist flat logo for "SK Electronics", a trusted home appliance repair
-shop in Banda, Uttar Pradesh. Wordmark "SK" inside a rounded square.
-Saffron-to-amber gradient (#FF9933 → #DC4F00) on the square.
-The "K" subtly forms a wrench or tool silhouette in negative space.
-Below the square: clean sans-serif word "SK ELECTRONICS" in deep ink.
-Tagline under, smaller: "Since 2010 · Banda".
-Thin horizontal tricolour bar at the bottom (saffron, white, green).
-Style: modern Indian small-business branding, like Khatabook or PhonePe
-for Business, NOT generic SaaS. Flat, no shadows, vector-friendly.
-Square 1:1 ratio. White background. No text outside the logo.
-```
-
-### App icon prompt — bold, recognisable at 48×48
-```
-App icon for an Indian appliance repair shop. Rounded square,
-gradient from warm saffron (#FF7A1A top-left) to deep amber
-(#DC4F00 bottom-right). Centered: bold white letters "SK"
-in an extra-bold sans-serif, with tight negative letter-spacing.
-Subtle small "tools" mark — a wrench + screwdriver crossed —
-faintly visible in the bottom-right corner at 30% opacity.
-No tagline, no text outside. Must be readable at 24×24 pixels.
-Style: confident, premium, warm, NOT cute. iOS-style corner radius.
-```
-
-### Hero banner / Instagram post prompt
-```
-Editorial banner image: an Indian repair technician in a clean blue
-uniform, smiling, kneeling next to a split AC unit in a tier-3 Indian
-home. Warm afternoon light through a window. Subtle saffron-amber
-color grading. Hindi+English overlay text: "Ghar baithe appliance
-service" / "Same-day repair". Bottom: thin saffron-white-green tricolour
-bar. Logo "SK Electronics — Banda · Since 2010" top-right.
-Style: warm, trustworthy, real (not stock-photo glossy).
-Aspect ratio 4:5 (Instagram portrait).
-```
-
-### Psychology behind the choices (so you can iterate)
-
-| Element | Why |
-|---|---|
-| **Saffron-amber gradient (#DC4F00)** | Saffron = Indian commercial heritage + warmth + energy. Strong on white. Not generic SaaS blue. Stands out in any city's Google search. |
-| **Deep ink type (#1A1209) on warm cream (#FFF8F0)** | Higher contrast than pure black-on-white, easier on bright-sunlight phone screens (your customers are Banda, not Mumbai air-conditioned offices). |
-| **"SK" monogram** | Father is the brand. Personal recognition. People in Banda know "Sushil ji ka shop" — the monogram reinforces that. |
-| **Tricolour bar (saffron-white-green)** | Subtle Indian patriotic signal. Builds trust with older customers. Don't overuse — once at the bottom is enough. |
-| **Green for "money" (#047857) and "done"** | Money colour worldwide. Reassures "kaam pakka ho gaya, paisa receive ho gaya". |
-| **No emojis as logo elements** | Local businesses get judged on professionalism. Emojis in marketing text is fine; emojis IN the logo says "I made this in Canva in 5 minutes". |
-| **Hindi sub-labels, not full bilingual** | Bilingual = clutter. Hindi micro-labels = warmth + accessibility for non-English readers without slowing down anyone. |
 
 ---
 
